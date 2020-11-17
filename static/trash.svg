@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+  <svg
+    version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    preserveAspectRatio="xMidYMid meet"
+    viewBox="218.00000000000006 180.3899517637308 182.00000000000006 189.92210195326564"
+    width="10"
+    height="10"><defs>
+      <path d="M385 228.23L233 228.23" id="drMt7cCCX" />
+      <path d="M309 236.39L309 195.39" id="e1tfHbOdZN" />
+      <path
+        d="M247.64 258.3L370.36 258.3L370.36 359.81L247.64 359.81L247.64 258.3Z"
+        id="b1jibRqA5k" />
+    </defs>
+    <g>
+      <g>
+        <g>
+          <use
+            xlink:href="#drMt7cCCX"
+            opacity="1"
+            fill-opacity="0"
+            stroke="#000000"
+            stroke-width="30"
+            stroke-opacity="1" />
+        </g>
+      </g>
+      <g>
+        <g>
+          <use
+            xlink:href="#e1tfHbOdZN"
+            opacity="1"
+            fill-opacity="0"
+            stroke="#000000"
+            stroke-width="30"
+            stroke-opacity="1" />
+        </g>
+      </g>
+      <g>
+        <use
+          xlink:href="#b1jibRqA5k"
+          opacity="1"
+          fill="#000000"
+          fill-opacity="1" />
+      </g>
+    </g>
+  </svg>

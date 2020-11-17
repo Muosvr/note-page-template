@@ -1,0 +1,225 @@
+
+import dotenv from 'dotenv';
+import { exec } from 'child_process';
+import * as fse from 'fs-extra';
+import { Octokit } from '@octokit/rest';
+import * as Git from 'nodegit';
+import path from 'path';
+
+dotenv.config();
+
+// const username = 'laughabc';
+
+// const repoOwner = 'Muosvr';
+// const repoName = `${repoOwner.toLowerCase()}.github.io`;
+// const repoHost = 'github.com';
+// const repoUrl = `https://${repoHost}/${repoOwner}/${repoName}`;
+// const author = 'Jason Wu';
+// const email = 'lujason2015@gmail.com';
+
+// const pathToRepo = path.join('__sapper__',`export`);
+// const usernamePath = path.join(pathToRepo, username);
+// const pathToBackup = path.join('__sapper__', `${repoName}-export_bak`);
+
+// const authorSig = Git.Signature.now(author, email);
+// const committerSig = authorSig;
+
+// const octokit = new Octokit({
+//   auth: process.env.GITHUB_TOKEN,
+// });
+
+
+function build({userId, repoOwner, repoName, repoHost, author, email, authToken}){
+  // console.log('userId :>> ', userId);
+  // console.log('repoOwner :>> ', repoOwner);
+  // console.log('repoName :>> ', repoName);
+  // console.log('repoHost :>> ', repoHost);
+  // console.log('author :>> ', author);
+  // console.log('email :>> ', email);
+  // console.log('authToken :>> ', authToken);
+  const pathToRepo = path.join('__sapper__',`export`);
+  const pathToBackup = path.join('__sapper__', `${repoName}-export_bak`);
+
+  const repoUrl = `https://${repoHost}/${repoOwner}/${repoName}`;
+
+  const authorSig = Git.Signature.now(author, email);
+  const committerSig = authorSig;
+
+  const octokit = new Octokit({
+    auth: authToken,
+  });
+
+  const credentials = () => {
+    return Git.Cred.userpassPlaintextNew(
+      authToken,
+      'x-oauth-basic'
+    )
+  };
+
+  let index, repo;
+
+  return new Promise((resolve, reject) => {
+    octokit.repos.get({
+      owner: repoOwner,
+      repo: repoName
+    })
+    .then(() => {
+      return new Promise((resolve, reject) => {
+        console.log('Ensuring export directory is empty');
+        fse.emptyDir(pathToRepo, err => {
+          if (err) {
+            reject(['Unable to empty directory', err]);
+          }else {
+            resolve();
+          }
+        })
+      })
+    })
+    .then(() => {
+      console.log('Cloning repo');
+      return Git.Clone.clone(repoUrl, pathToRepo, {
+        fetchOpts: {
+          callbacks: { credentials }
+        }
+      })
+    })
+    .catch(err => {
+      if (err.status === 404){
+        console.log('Remote repo not found, creating a new Repo');
+        return octokit.repos.createForAuthenticatedUser({
+          name: repoName
+        })
+      }
+      throw err;
+    })
+    .then(() => {
+      console.log('(Re)initializing repo');
+      Git.Repository.init(pathToRepo, 0)
+    })
+    .then(() => {
+      console.log('Backing up .git directory');
+      return fse.copy(path.join(pathToRepo, '.git'), path.join(pathToBackup, '.git'));
+    })
+    .then(() => {
+      console.log('Building...');
+      return new Promise((resolve, reject) => {
+        exec(`PORT=5000 USER_ID=${userId} USERNAME=${repoOwner} PUBLISHED_ONLY=true npx sapper export`, (error, stdout) => {
+          if (error) {
+            console.log('Build error', error);
+            reject('Build failed')
+          }else {
+            console.log(stdout);
+            resolve();
+          }
+        })
+      })
+    })
+    .then(() => {
+      console.log('Restoring .git directory');
+      return fse.copy(path.join(pathToBackup, '.git'), path.join(pathToRepo, '.git'));
+    })
+    .then(() => {
+      console.log('Opening repo')
+      return Git.Repository.open(pathToRepo)
+    })
+    .then( repoResult => {
+      repo = repoResult;
+      return repo.refreshIndex();
+    })
+    .then(indexResult => {
+      index = indexResult
+    })
+    .then(() => {
+      console.log('Performing git add -A')
+      return index.addAll();
+    })
+    .then(() => {
+      console.log('Writing');
+      return index.write();
+    })
+    .then(() => {
+      return index.writeTree();
+    })
+    .then(oidRes => {
+      console.log('Creating new commit');
+      return createNewCommit(repo, oidRes, authorSig, committerSig);
+    })
+    .then(() => {
+      console.log('Setting up remote');
+      return getOrCreateRemote(repo, 'origin', repoUrl)
+    })
+    .then(remote => {
+      console.log('Pushing');
+      return push(remote, credentials)
+    })
+    .then(() => {
+      console.log('Finished');
+      resolve();
+    })
+    .catch(err => {
+      console.log( err.message);
+      reject(err.message)
+    })
+  })
+
+}
+
+function getOrCreateRemote(repo, remoteName, url) {
+  return new Promise((resolve, reject) => {
+    Git.Remote.list(repo)
+    .then(remoteList => {
+      if (!remoteList.includes(remoteName)){
+        Git.Remote.create(repo, remoteName, url)
+          .then(remote => resolve(remote))
+          .catch(err => console.log('Unable to create remote', err))
+      } else {
+        Git.Remote.lookup(repo, remoteName)
+          .then(remote => resolve(remote))
+          .catch(err => console.log('Unable to look up Remote', err))
+      }
+    })
+    .catch(err => console.log('Unable to look up remote list', err))
+  })
+}
+
+function push(remote, credentials) {
+  return new Promise((resolve, reject) => {
+    remote.push(
+      ['refs/heads/master:refs/heads/master'],
+      { callbacks: { credentials } }
+    )
+    .then(() => resolve())
+    .catch(err => reject(['Error Pushing', err]))
+  }) 
+}
+
+function createNewCommit(repo, oid, authorSig, committerSig) {
+  return new Promise((resolve, reject) => {
+    Git.Reference.list(repo).then(
+      list => {
+        if (list.length){
+          Git.Reference.nameToId(repo, 'HEAD')
+            .then(head => {
+              return repo.getCommit(head);
+            })
+            .then(parent => {
+              return repo.createCommit('HEAD', authorSig, committerSig, 'new build', oid, [parent])
+            })
+            .then(commitId => resolve(commitId))
+            .catch(err => {
+              console.log(err)
+              reject('Unable to create commit')
+            })
+        }else {
+          repo.createCommit('HEAD', authorSig, committerSig, 'First commit', oid, [])
+          .then(commitId => resolve(commitId))
+          .catch(err => {
+            console.log(err);
+            reject('Unable to create first commit')
+          })
+        }
+      })
+  })
+}
+
+export default build;
