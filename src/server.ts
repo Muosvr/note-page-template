@@ -2,29 +2,15 @@ import sirv from 'sirv';
 import compression from 'compression';
 import * as sapper from '@sapper/server';
 import express from 'express';
-import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import proxy from 'express-http-proxy';
-import session from 'express-session';
-import createStore from 'connect-mongo';
 import csrf from 'csurf';
-
-const SessionStore = createStore(session);
+import cookieSession from 'cookie-session';
+import type { RequestWithSession } from './types';
+import type { Response } from 'express';
 
 dotenv.config()
-
-mongoose.connect(
-	process.env.MONGO_URI,
-	{
-		useNewUrlParser: true,
-		useUnifiedTopology: true,
-		useFindAndModify: false,
-		useCreateIndex: true
-	}
-).then(
-	() => console.log('MongoDB connected')
-).catch(err => console.log('Failed to connect to DB.', err));
 
 const { PORT, NODE_ENV } = process.env;
 const dev = NODE_ENV === 'development';
@@ -36,17 +22,16 @@ const app = express();
 const csrfProtection = csrf();
 
 app.use('/api/upload', proxy(image_host, {
-	proxyReqPathResolver: function (req) {
+	proxyReqPathResolver: function () {
 		return upload_path_with_key
 	}
 }))
 
-app.use(session({
-	secret: process.env.SESSION_SECRET,
-	store: new SessionStore({ mongooseConnection: mongoose.connection}),
-	resave: false,
-	saveUninitialized: false
-}));
+app.use(cookieSession({
+	name: 'session',
+	keys: [process.env.SESSION_KEY_1, process.env.SESSION_KEY_2],
+	httpOnly: true,
+}))
 
 app.use(bodyParser.json());
 
@@ -55,11 +40,18 @@ app.use(
 	compression({ threshold: 0 }),
 	sirv('static', { dev }),
 	sapper.middleware({
-		session: (req, res) => ({
-			csrf: req.csrfToken(),
-			username: process.env.USERNAME || req.session.username,
-			userId: process.env.USER_ID || req.session.userId,
-		})
+		session: (req: RequestWithSession, _: Response) => {
+			return {
+				csrf: req.csrfToken(),
+				githubUsername: req.session.githubUsername,
+				githubClientId: process.env.GITHUB_CLIENT_ID,
+				newRepoName: req.session.newRepoName,
+				newRepoUrl: req.session.newRepoUrl,
+				hasVercelToken: !!req.session.vercelToken,
+				vercelProjectId: req.session.vercelProjectId,
+				newSiteDomain: req.session.newSiteDomain
+			}
+		}
 	})
 );
 

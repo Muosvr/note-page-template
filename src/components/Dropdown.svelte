@@ -1,4 +1,4 @@
-<script>
+<!--<script>
   import { onMount, createEventDispatcher } from 'svelte';
   // export let selected;
   export let left;
@@ -66,9 +66,7 @@
     // selected = value;
     dispatch('select', value);
   }
-</script>
-
-<style>
+</script><style>
   /* The search field */
   #myInput {
     box-sizing: border-box;
@@ -121,9 +119,7 @@
   .dropdown-option {
     text-align: left;
   }
-</style>
-
-<div class='dropdown' bind:this={dropdownContainer}>
+</style><div class='dropdown' bind:this={dropdownContainer}>
   <div id='myDropdown' class='dropdown-content show' bind:this={dropdown}>
     <input 
       type='text' 
@@ -141,4 +137,5 @@
       >{option.text}</option>
     {/each}
   </div>
-</div>
+</div> -->
+<p>Dropdown placeholder</p>

@@ -1,4 +1,4 @@
-<script lang='ts'>
+<script lang="ts">
   import { uploadFile } from "../ajax";
   import { store, dispatchToStore } from "../stores";
   import { updateImageSrc } from "../actions";
@@ -11,7 +11,6 @@
   let input: HTMLInputElement;
   let hideInput: boolean = false;
   let hideImage: boolean = true;
-
 
   const handleUpload = (): void => {
     if (input.files && input.files[0]) {
@@ -27,9 +26,7 @@
       .then((res) => {
         dispatchToStore(updateImageSrc({ src: res.data.data.url, elementId }));
       })
-      .catch((err) =>
-        console.log("handleImageLoaded: failed to upload to host")
-      );
+      .catch(() => console.log("handleImageLoaded: failed to upload to host"));
   };
 
   onMount(() => {

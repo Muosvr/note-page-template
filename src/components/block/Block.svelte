@@ -1,12 +1,15 @@
-<script lang='ts'>
+<script lang="ts">
   import { onMount } from "svelte";
   import Divider from "../Divider.svelte";
   import Element from "../Element.svelte";
   import { levelConfig } from "../../stores";
   import { store, dispatchToStore } from "../../stores";
   import { focusBlock, createBlockChild } from "../../actions";
-  import type { SingleBlockProps, State, BackgroundImage } from '../../types';
-  import { selectBackgroundImage, selectBackgroundColor } from '../../selectors';
+  import type { SingleBlockProps, State, BackgroundImage } from "../../types";
+  import {
+    selectBackgroundImage,
+    selectBackgroundColor,
+  } from "../../selectors";
 
   export let level: number = 0;
   export let id: string = "root";
@@ -16,27 +19,17 @@
   let hidden: boolean = true;
   let backgroundImage: BackgroundImage;
   let root: boolean;
-  let block: any;
-  // let backgroundColor: string;
 
   $: backgroundImage = selectBackgroundImage($store, id);
-  // $: backgroundColor = selectBackgroundColor($store, id);
 
-  // $: if (container && block && $store.blockIds['root'][0] === id && block.offsetWidth){
-  //   //@ts-ignore
-  //   container.style.width = String(block.offsetWidth + 30) + 'px' ;
-  //   container.style['margin-left'] = '-15px';
-  //   container.style['margin-right'] = '-10px';
-  // }
-
-  const createChild = (index?:number) => {
+  const createChild = (index?: number) => {
     createBlockChild(id, index);
   };
 
-  const getLevelConfig = ( level: number ): any => $levelConfig[level] || $levelConfig.default;
+  const getLevelConfig = (level: number): any =>
+    $levelConfig[level] || $levelConfig.default;
 
   onMount(() => {
-    block = document.getElementsByClassName('block')[0];
     let props: SingleBlockProps = $store.blockProps[id];
     if (props.height) {
       container.style.height = props.height;
@@ -48,28 +41,16 @@
 
     if (backgroundImage) {
       let imageProps: BackgroundImage = $store.blockProps[id].backgroundImage;
-      setBackgroundImage(imageProps.url, imageProps.size, imageProps.position)
+      setBackgroundImage(imageProps.url, imageProps.size, imageProps.position);
     }
-
-    // if ($store.blockIds['root'][0] === id) {
-    //   console.log('hidding divider')
-    //   hideFirstDivider = true;
-    //   container.style['margin-left'] = '-15px';
-    //   container.style['margin-right'] = '-10px';
-    //   let block = document.getElementsByClassName('block')[0];
-
-    //   //@ts-ignore
-    //   container.style.width = String(block.offsetWidth + 30) + 'px' ;
-    // }
-    if (id === 'root') {
+    if (id === "root") {
       root = true;
     }
-    
   });
 
   $: if ((backgroundImage || {}).reload && container) {
     let imageProps: BackgroundImage = $store.blockProps[id].backgroundImage;
-    setBackgroundImage(imageProps.url, imageProps.size, imageProps.position)
+    setBackgroundImage(imageProps.url, imageProps.size, imageProps.position);
   }
 
   $: {
@@ -80,41 +61,42 @@
   }
 
   const setBackgroundImage = (
-    url:string, 
-    size: string = 'cover', 
-    position: string = 'center'
+    url: string,
+    size: string = "cover",
+    position: string = "center"
   ): void => {
-    container.style['background-image'] = url? `url("${url}")` : '';
-    container.style['background-size'] = size
-    container.style['background-position'] = position;
-  }
+    container.style["background-image"] = url ? `url("${url}")` : "";
+    container.style["background-size"] = size;
+    container.style["background-position"] = position;
+  };
 
-  const setBackgroundColor = (color: string= undefined): void => {
-    container.style['background-color'] = color;
-  }
+  const setBackgroundColor = (color: string = undefined): void => {
+    container.style["background-color"] = color;
+  };
 
-  const shouldHideControl = ( store: State ): boolean => {
+  const shouldHideControl = (store: State): boolean => {
     if (hasChildren(store) || !store.pageProps.editingLayout) return true;
   };
 
-  const hasChildren = ( store: State ): boolean => {
+  const hasChildren = (store: State): boolean => {
     if (store.blockIds) {
       return store.blockIds[id].length > 0;
     }
   };
 
-  const selectBlockIds = ( store: State ): string[] => {
+  const selectBlockIds = (store: State): string[] => {
     return store.blockIds[id];
   };
 
-  const handleFocus = (e: Event):void => {
+  const handleFocus = (e: Event): void => {
     e.stopPropagation();
     if ($store.pageProps.editingLayout) {
       dispatchToStore(focusBlock({ id }));
     }
   };
 
-  const isInFocus = (store: State): boolean => (store.pageProps.focusedBlock || {}).id === id
+  const isInFocus = (store: State): boolean =>
+    (store.pageProps.focusedBlock || {}).id === id;
 </script>
 
 <style type="text/less">
@@ -128,7 +110,6 @@
     transition: opacity 0.5s;
   }
   .shadow {
-    // box-shadow: 0 0px 0px 1px rgb(153, 153, 153);
     border-radius: 3px;
     border: 1px dashed rgb(153, 153, 153);
   }

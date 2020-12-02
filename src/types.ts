@@ -1,15 +1,17 @@
+import type { Request } from 'express';
+
 export interface BlockIds {
   [index: string]: string[]
 }
 
 export interface SingleBlockProps {
-    vertical: boolean,
-    elements?: string[],
-    parent: string,
-    hideBtns?: boolean,
-    height?: string,
-    backgroundImage?: BackgroundImage
-    backgroundColor?: string
+  vertical: boolean,
+  elements?: string[],
+  parent: string,
+  hideBtns?: boolean,
+  height?: string,
+  backgroundImage?: BackgroundImage
+  backgroundColor?: string
 }
 
 export interface BlockProps {
@@ -46,7 +48,7 @@ export interface FocusedBlock {
   id?: string,
 };
 
-export interface DataSource{
+export interface DataSource {
   url: string,
   ssr?: boolean
 };
@@ -95,3 +97,43 @@ export interface LogoData {
   image?: string,
   href: string
 }
+
+export interface Session {
+  username?: string,
+  githubUsername?: string,
+  author?: string,
+  githubToken?: string,
+  email?: string,
+  repo?: string,
+  newRepoName?: string
+  newRepoUrl?: string,
+  vercelToken?: string,
+  vercelProjectId?: string,
+  newSiteDomain?: string
+}
+
+export interface RequestWithSession extends Request {
+  session: Session
+}
+
+export interface PreloadSession {
+  githubUsername?: string,
+  csrf: string,
+  githubClientId?: string,
+  newRepoName?: string,
+  newRepoUrl?: string,
+  hasVercelToken?: string,
+  vercelProjectId?: string,
+  newSiteDomain?: string
+}
+
+export interface SitemapPage {
+  $name?: string,
+  $jsonFile?: string
+}
+
+export interface SitemapBranch<T> {
+  [index: string]: T
+}
+
+export type Sitemap = (SitemapBranch<SitemapPage> & SitemapPage) | SitemapPage

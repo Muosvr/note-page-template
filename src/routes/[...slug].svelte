@@ -2,8 +2,16 @@
   import { store } from "../stores";
   import type { State, PreloadSession } from "../types";
 
-  export async function preload(_: any, session: PreloadSession) {
-    let jsonUrl = `/index.json`;
+  interface Page {
+    params: {
+      slug: string[];
+    };
+  }
+
+  export async function preload(page: Page, session: PreloadSession) {
+    let path = page.params.slug.join("/");
+    let jsonUrl = `/${path}.json`;
+
     let resp: any;
     let resJson: State | { error: string };
     try {
@@ -26,7 +34,7 @@
     store.set(resJson);
     return {
       storePreloaded: resJson,
-      path: "/",
+      path,
       username: session.githubUsername,
     };
   }

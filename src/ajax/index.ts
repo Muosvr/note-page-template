@@ -1,6 +1,7 @@
 import axios from 'axios';
 import type { State } from '../types'
 import { getPageJsonUrl, getPageEditJsonUrl } from '../paths';
+import { urlToHTMLPath } from '../helpers';
 
 const BASE_URL = '/';
 
@@ -14,24 +15,22 @@ const LOGOUT_URL = BASE_API_URL + 'logout/'
 
 const BUILD_URL = BASE_API_URL + 'build/';
 
-export const setGlobalCsrf = (csrf: string):void => {
+const SITEMAP_JSON_URL = '/admin/edit/sitemap.json';
+
+export const setGlobalCsrf = (csrf: string): void => {
   axios.defaults.headers.common = {
     'CSRF-Token': csrf
   };
 }
 
 
-export const getPageJson = ( pageId: string ) => (
-  axios.get(getPageJsonUrl( pageId ))
+export const getPageJson = (pageId: string) => (
+  axios.get(getPageJsonUrl(pageId))
 )
 
-export const getPageContentFromGithub = ( pageId: string) => (
-  axios.get(getPageEditJsonUrl(pageId))
-)
-
-export const commitPageContentToGithub = ( pageId: string, payload: State ) => (
-  axios.put(getPageEditJsonUrl( pageId ), payload)
-)
+export const commitPageContentToGithub = (store: State, pagePath: string) => {
+  return axios.put(`/admin/edit/page.json?pagePath=${pagePath}`, store)
+}
 
 export const uploadFile = ({ file }) => {
   const formData = new FormData();
@@ -57,4 +56,12 @@ export const login = (
 
 export const logout = () => axios.get(LOGOUT_URL);
 
-// export const buildSite = () => axios.post(BUILD_URL);
+export const updateSitemap = (payload) => axios.put(SITEMAP_JSON_URL, payload);
+
+export const buildSite = () => axios.post('/api/build');
+
+// export const getGithubLoginLink = () => axios.get('/api/oauth');
+
+export const createGithubRepo = (repoName: string) => axios.post('/builder/createRepo', { repoName });
+
+export const createVercelProject = () => axios.post('/builder/setupVercel')
