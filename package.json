@@ -7,6 +7,7 @@
     "build": "sapper build --legacy",
     "export": "sapper export",
     "start": "node __sapper__/build",
+    "template": "rsync -av --exclude-from=.template_exclude . ../note-page-template",
     "validate": "svelte-check --ignore src/node_modules/@sapper",
     "heroku-cleanup": "NPM_CONFIG_PRODUCTION=false npm install --only=dev",
     "test": "mocha"

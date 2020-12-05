@@ -1,0 +1,5 @@
+node_modules
+src/routes/builder
+__sapper__
+.git
+.vscode

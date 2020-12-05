@@ -4,16 +4,18 @@ import getFileFromGithubWithHash from './_getFileFromGithubWithHash';
 import createOrUpdateFileOnGithubWithHash from './_createOrUpdateFileOnGithubWithHash';
 
 export function post(req: RequestWithSession, res: Response) {
-  // Todo use environment variable
-
-  const { githubUsername, githubToken, email, author } = req.session;
+  const githubUsername = process.env.GITHUB_USERNAME;
+  const githubToken = process.env.GITHUB_TOKEN;
+  const repo = process.env.GITHUB_REPO;
+  const author = process.env.AUTHOR;
+  const email = process.env.EMAIL;
 
   let vercelJsonPath = 'vercel.json'
   let vercelJson: any;
 
   getFileFromGithubWithHash({
     owner: githubUsername,
-    repo: process.env.GITHUB_REPO,
+    repo,
     token: githubToken,
     path: vercelJsonPath
   })
@@ -25,7 +27,7 @@ export function post(req: RequestWithSession, res: Response) {
       return createOrUpdateFileOnGithubWithHash({
         content: vercelJsonRes,
         owner: githubUsername,
-        repo: process.env.GITHUB_REPO,
+        repo,
         email,
         token: githubToken,
         path: vercelJsonPath,
@@ -41,7 +43,7 @@ export function post(req: RequestWithSession, res: Response) {
       return createOrUpdateFileOnGithubWithHash({
         content: vercelJson,
         owner: githubUsername,
-        repo: process.env.GITHUB_REPO,
+        repo,
         email,
         token: githubToken,
         path: vercelJsonPath,
