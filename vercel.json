@@ -1,1 +1,17 @@
-{"version":2,"builds":[{"src":"package.json","use":"vercel-sapper","config":{"include":["content"]}}],"github":{"enabled":false}}
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "vercel-sapper",
+      "config": {
+        "include": [
+          "content"
+        ]
+      }
+    }
+  ],
+  "github": {
+    "enabled": true
+  }
+}
