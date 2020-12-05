@@ -45,11 +45,11 @@ app.use(
 				csrf: req.csrfToken(),
 				githubUsername: req.session.githubUsername,
 				githubClientId: process.env.GITHUB_CLIENT_ID,
-				newRepoName: req.session.newRepoName,
+				repo: req.session.repo || process.env.GITHUB_REPO,
 				newRepoUrl: req.session.newRepoUrl,
 				hasVercelToken: !!req.session.vercelToken,
 				vercelProjectId: req.session.vercelProjectId,
-				newSiteDomain: req.session.newSiteDomain
+				newSiteDomain: req.session.newSiteDomain,
 			}
 		}
 	})

@@ -98,16 +98,14 @@
     /{key}
     <span class="control">
       <button class="create-path-btn" on:click={() => (showCreatePath = path)}>
-        Create Path
+        Add Child Path
       </button>
 
-      {#if !pageContent}
-        <button
-          class="create-page-btn"
-          on:click={() => goto(`/admin/edit/page?pagePath=${path}&create=true`)}>
-          Create Page
-        </button>
-      {/if}
+      <button
+        class="create-page-btn"
+        on:click={() => goto(`/admin/edit/page?pagePath=${path}${pageContent ? '' : '&create=true'}`)}>
+        {pageContent ? 'Edit Page' : 'Create Page'}
+      </button>
 
       <button
         class="delete-btn"

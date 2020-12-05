@@ -1,21 +1,22 @@
 import axios from 'axios';
 import type { State } from '../types'
 import { getPageJsonUrl, getPageEditJsonUrl } from '../paths';
-import { urlToHTMLPath } from '../helpers';
+// import { urlToHTMLPath } from '../helpers';
 
 const BASE_URL = '/';
 
 const BASE_API_URL = BASE_URL + 'api/'
 
-const BASE_PAGE_URL = BASE_API_URL + 'page/';
+// const BASE_PAGE_URL = BASE_API_URL + 'page/';
 
-const REGISTER_URL = BASE_API_URL + 'register/';
-const LOGIN_URL = BASE_API_URL + 'login/';
-const LOGOUT_URL = BASE_API_URL + 'logout/'
+// const REGISTER_URL = BASE_API_URL + 'register/';
+// const LOGIN_URL = BASE_API_URL + 'login/';
 
-const BUILD_URL = BASE_API_URL + 'build/';
+// const LOGOUT_URL = BASE_URL + 'logout/'
 
-const SITEMAP_JSON_URL = '/admin/edit/sitemap.json';
+// const BUILD_URL = BASE_API_URL + 'build/';
+
+const SITEMAP_JSON_URL = '/admin/sitemap.json';
 
 export const setGlobalCsrf = (csrf: string): void => {
   axios.defaults.headers.common = {
@@ -42,19 +43,19 @@ export const uploadFile = ({ file }) => {
   });
 }
 
-export const register = (
-  { username, password, csrf }: { username: string, password: string, csrf: string }
-) => {
-  return axios.post(REGISTER_URL, { username, password });
-}
+// export const register = (
+//   { username, password, csrf }: { username: string, password: string, csrf: string }
+// ) => {
+//   return axios.post(REGISTER_URL, { username, password });
+// }
 
-export const login = (
-  { username, password, csrf }: { username: string, password: string, csrf: string }
-) => {
-  return axios.post(LOGIN_URL, { username, password });
-}
+// export const login = (
+//   { username, password, csrf }: { username: string, password: string, csrf: string }
+// ) => {
+//   return axios.post(LOGIN_URL, { username, password });
+// }
 
-export const logout = () => axios.get(LOGOUT_URL);
+// export const logout = () => axios.get(LOGOUT_URL);
 
 export const updateSitemap = (payload) => axios.put(SITEMAP_JSON_URL, payload);
 
@@ -64,4 +65,6 @@ export const buildSite = () => axios.post('/api/build');
 
 export const createGithubRepo = (repoName: string) => axios.post('/builder/createRepo', { repoName });
 
-export const createVercelProject = () => axios.post('/builder/setupVercel')
+export const createVercelProject = () => axios.post('/builder/setupVercel');
+
+export const getUserRepos = (keyword: string) => axios.get(`/api/getRepos?keyword=${keyword}`);

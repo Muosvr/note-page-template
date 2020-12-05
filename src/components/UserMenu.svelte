@@ -1,11 +1,13 @@
 <script lang="ts">
-  import { logout } from "../ajax";
+  // import { logout } from "../ajax";
+  import { goto } from "@sapper/app";
   export let username: string;
 
   const handleLogout = (): void => {
-    logout()
-      .then(() => window.location.reload())
-      .catch(() => console.log("Logout error"));
+    goto("/logout");
+    // logout()
+    //   .then(() => window.location.reload())
+    //   .catch(() => console.log("Logout error"));
   };
 </script>
 

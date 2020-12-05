@@ -105,7 +105,6 @@ export interface Session {
   githubToken?: string,
   email?: string,
   repo?: string,
-  newRepoName?: string
   newRepoUrl?: string,
   vercelToken?: string,
   vercelProjectId?: string,
@@ -120,7 +119,7 @@ export interface PreloadSession {
   githubUsername?: string,
   csrf: string,
   githubClientId?: string,
-  newRepoName?: string,
+  repo?: string,
   newRepoUrl?: string,
   hasVercelToken?: string,
   vercelProjectId?: string,
