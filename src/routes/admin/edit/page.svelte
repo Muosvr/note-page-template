@@ -24,10 +24,13 @@
 			const { pagePath } = page.query;
 			let editPagePath = `/admin/edit/page`;
 
-			// if (!session.githubUsername) {
-			// 	this.redirect(302, `/login?next=${editPagePath}?pagePath=${pagePath}`);
-			// 	return;
-			// }
+			if (!session.username) {
+				this.redirect(
+					302,
+					`/admin/login?next=${editPagePath}?pagePath=${pagePath}`
+				);
+				return;
+			}
 
 			const res = await this.fetch(
 				`/admin/edit/page.json?pagePath=${pagePath}`

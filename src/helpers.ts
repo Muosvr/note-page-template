@@ -130,3 +130,20 @@ export function cleanString(input: string) {
   }
   return strArr.join('');
 }
+
+export function toAllCapSnakeCase(value: string): string {
+  const arr = value.split('');
+  let newArr = [];
+  arr.forEach((letter, index) => {
+    if (letter === '-') {
+      newArr.push('_');
+    } else {
+      newArr.push(letter.toUpperCase());
+    }
+    const nextCharCode = value.charCodeAt(index + 1);
+    if (nextCharCode >= 65 && nextCharCode <= 90) {
+      newArr.push('_');
+    };
+  })
+  return newArr.join('');
+}

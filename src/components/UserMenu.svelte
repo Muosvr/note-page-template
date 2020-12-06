@@ -14,10 +14,10 @@
 <style>
   .user-menu {
     float: right;
-    right: 0;
-    top: 0;
+    /* right: 0; */
+    /* top: 0; */
     padding: 10px;
-    position: absolute;
+    /* position: absolute; */
     z-index: 50;
   }
   .logout {

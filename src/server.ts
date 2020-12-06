@@ -50,6 +50,7 @@ app.use(
 				hasVercelToken: !!req.session.vercelToken,
 				vercelProjectId: req.session.vercelProjectId,
 				newSiteDomain: req.session.newSiteDomain,
+				username: req.session.username,
 			}
 		}
 	})

@@ -10,9 +10,12 @@
 <script lang="ts">
   import UserMenu from "../../components/UserMenu.svelte";
   export let username: string;
+  export let segment: string;
 </script>
 
 <main>
-  <UserMenu {username} />
+  {#if segment !== 'login'}
+    <UserMenu {username} />
+  {/if}
   <slot />
 </main>

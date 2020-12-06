@@ -1,10 +1,10 @@
 <script context="module" lang="ts">
   import type { PreloadSession } from "../../types";
   export async function preload(page, session: PreloadSession) {
-    // if (!session.githubUsername) {
-    //   this.redirect(302, "/login?next=/admin");
-    //   return;
-    // }
+    if (!session.username) {
+      this.redirect(302, "/admin/login?next=/admin");
+      return;
+    }
     return {
       githubRepo: session.repo,
     };

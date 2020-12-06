@@ -10,7 +10,8 @@ const BASE_API_URL = BASE_URL + 'api/'
 // const BASE_PAGE_URL = BASE_API_URL + 'page/';
 
 // const REGISTER_URL = BASE_API_URL + 'register/';
-// const LOGIN_URL = BASE_API_URL + 'login/';
+
+// const ADMIN_LOGIN_URL = BASE_API_URL + 'login/';
 
 // const LOGOUT_URL = BASE_URL + 'logout/'
 
@@ -49,11 +50,9 @@ export const uploadFile = ({ file }) => {
 //   return axios.post(REGISTER_URL, { username, password });
 // }
 
-// export const login = (
-//   { username, password, csrf }: { username: string, password: string, csrf: string }
-// ) => {
-//   return axios.post(LOGIN_URL, { username, password });
-// }
+export const login = (username: string, password: string) => {
+  return axios.post('/admin/login.json', { username, password });
+}
 
 // export const logout = () => axios.get(LOGOUT_URL);
 
@@ -65,6 +64,6 @@ export const buildSite = () => axios.post('/api/build');
 
 export const createGithubRepo = (repoName: string) => axios.post('/builder/createRepo', { repoName });
 
-export const createVercelProject = () => axios.post('/builder/setupVercel');
+export const createVercelProject = (adminUsername: string, adminPassword: string) => axios.post('/builder/setupVercel', { adminUsername, adminPassword });
 
 export const getUserRepos = (keyword: string) => axios.get(`/api/getRepos?keyword=${keyword}`);

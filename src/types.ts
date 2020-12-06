@@ -123,7 +123,8 @@ export interface PreloadSession {
   newRepoUrl?: string,
   hasVercelToken?: string,
   vercelProjectId?: string,
-  newSiteDomain?: string
+  newSiteDomain?: string,
+  username?: string
 }
 
 export interface SitemapPage {

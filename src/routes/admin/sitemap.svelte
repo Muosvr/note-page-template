@@ -1,9 +1,9 @@
 <script context="module" lang="ts">
   import type { PreloadSession, Sitemap } from "../../types";
   export async function preload(_: any, session: PreloadSession) {
-    // if (!session.githubUsername) {
-    //   this.redirect(302, `/login?next=/admin/sitemap`);
-    // }
+    if (!session.username) {
+      this.redirect(302, `/admin/login?next=/admin/sitemap`);
+    }
 
     const url = "/admin/sitemap.json";
     let res: any;

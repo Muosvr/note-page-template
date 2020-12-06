@@ -35,7 +35,7 @@
     return {
       storePreloaded: resJson,
       path,
-      username: session.githubUsername,
+      username: session.username,
     };
   }
 </script>

@@ -3,3 +3,4 @@ src/routes/builder
 __sapper__
 .git
 .vscode
+content
