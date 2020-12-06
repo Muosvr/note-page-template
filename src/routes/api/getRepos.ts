@@ -6,7 +6,6 @@ export function get(req: RequestWithSession, res: Response) {
   const octokit = new Octokit({ auth: req.session.githubToken });
 
   const q = `user:${req.session.githubUsername} ${req.query.keyword} in:name`;
-  console.log('q :>> ', q);
   octokit.search.repos({ q })
     .then(({ data }) => {
       res.json(data)

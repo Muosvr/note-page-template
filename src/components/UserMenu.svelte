@@ -1,13 +1,9 @@
 <script lang="ts">
-  // import { logout } from "../ajax";
-  import { goto } from "@sapper/app";
+  import { capitalize } from "../helpers";
   export let username: string;
 
   const handleLogout = (): void => {
-    goto("/logout");
-    // logout()
-    //   .then(() => window.location.reload())
-    //   .catch(() => console.log("Logout error"));
+    window.location.assign("/admin/logout");
   };
 </script>
 
@@ -20,19 +16,16 @@
     /* position: absolute; */
     z-index: 50;
   }
-  .logout {
-    cursor: pointer;
-  }
 </style>
 
 <div class="user-menu">
   {#if username}
-    <span class="username">{username}</span>
+    <span class="username">{capitalize(username)}</span>
     <span>|</span>
-    <span class="logout" on:click={handleLogout}>Logout</span>
+    <a href="/admin/logout">Logout</a>
   {:else}
     <a href="/auth/register">Register</a>
     <span>|</span>
-    <a href="/auth/login">Login</a>
+    <a href="/admin/login">Login</a>
   {/if}
 </div>

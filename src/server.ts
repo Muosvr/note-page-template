@@ -51,6 +51,7 @@ app.use(
 				vercelProjectId: req.session.vercelProjectId,
 				newSiteDomain: req.session.newSiteDomain,
 				username: req.session.username,
+				vercelClientId: process.env.VERCEL_CLIENT_ID,
 			}
 		}
 	})

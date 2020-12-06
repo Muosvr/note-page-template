@@ -1,8 +1,8 @@
 <script context="module" lang="ts">
   import type { PreloadSession } from "../../types";
-  export async function preload(page, session: PreloadSession) {
+  export async function preload(_: any, session: PreloadSession) {
     return {
-      username: session.githubUsername,
+      username: session.username,
     };
   }
 </script>
@@ -14,7 +14,7 @@
 </script>
 
 <main>
-  {#if segment !== 'login'}
+  {#if !['login', 'edit'].includes(segment)}
     <UserMenu {username} />
   {/if}
   <slot />

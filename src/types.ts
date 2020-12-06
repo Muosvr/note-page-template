@@ -108,7 +108,8 @@ export interface Session {
   newRepoUrl?: string,
   vercelToken?: string,
   vercelProjectId?: string,
-  newSiteDomain?: string
+  newSiteDomain?: string,
+  vercelClientId?: string
 }
 
 export interface RequestWithSession extends Request {
@@ -124,7 +125,8 @@ export interface PreloadSession {
   hasVercelToken?: string,
   vercelProjectId?: string,
   newSiteDomain?: string,
-  username?: string
+  username?: string,
+  vercelClientId?: string
 }
 
 export interface SitemapPage {

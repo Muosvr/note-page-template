@@ -10,7 +10,6 @@
 
 <script lang="ts">
   import { login, setGlobalCsrf } from "../../ajax";
-  import { goto } from "@sapper/app";
   import _ from "lodash";
 
   export let next: string;
@@ -26,8 +25,7 @@
     e.preventDefault();
     login(username, password)
       .then(() => {
-        console.log(":>> logged in");
-        goto(next);
+        window.location.assign(next);
       })
       .catch((err) => {
         if (_.get(err, "response.status") === 403) {

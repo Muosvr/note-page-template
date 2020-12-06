@@ -67,3 +67,5 @@ export const createGithubRepo = (repoName: string) => axios.post('/builder/creat
 export const createVercelProject = (adminUsername: string, adminPassword: string) => axios.post('/builder/setupVercel', { adminUsername, adminPassword });
 
 export const getUserRepos = (keyword: string) => axios.get(`/api/getRepos?keyword=${keyword}`);
+
+export const getDeploymentState = () => axios.get('/api/deploymentState');

@@ -147,3 +147,7 @@ export function toAllCapSnakeCase(value: string): string {
   })
   return newArr.join('');
 }
+
+export function capitalize(word: string): string {
+  return word.split('').map((l, i) => (i == 0 ? l.toUpperCase() : l)).join('')
+}

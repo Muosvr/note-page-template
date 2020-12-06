@@ -8,12 +8,19 @@
 		togglePublishPage,
 	} from "../../actions";
 	import { selectShowToolbar } from "../../selectors";
-	import { commitPageContentToGithub, buildSite } from "../../ajax";
+	import {
+		commitPageContentToGithub,
+		buildSite,
+		getDeploymentState,
+	} from "../../ajax";
 	import { onMount } from "svelte";
+	import Button from "../general/Button.svelte";
 
+	let committing = false;
+	// let buildMessage: "Success" | "Failed" | "Commiting..." | "Idle" = "Idle";
 	let building = false;
-	let buildMessage: "Success" | "Failed" | "Commiting..." | "Idle" = "Idle";
 	let pagePath: string;
+	let deploymentState = "READY";
 
 	onMount(() => {
 		let urlParams = new URLSearchParams(window.location.search);
@@ -32,25 +39,58 @@
 	const handlePublishPage = () => dispatchToStore(togglePublishPage());
 
 	const handleCommit = () => {
-		building = true;
-		buildMessage = "Commiting...";
+		committing = true;
+		// buildMessage = "Commiting...";
 		commitPageContentToGithub($store, pagePath)
 			.then(() => {
 				localStorage.removeItem($store.pageId);
-				buildMessage = "Success";
-				building = false;
 			})
-			.catch((err) => {
-				console.log("Commit error", err);
-				buildMessage = "Failed";
-				building = false;
-			});
+			.catch(() => {
+				console.log("Commit error");
+			})
+			.finally(() => (committing = false));
 	};
 
 	const handleBuild = () => {
-		buildSite().catch((err) => {
-			console.log("Build error", err);
-		});
+		building = true;
+		buildSite()
+			.then(() => {
+				deploymentState = "BUILDING";
+				pollForDeploymentStateChange();
+			})
+			.catch((err) => {
+				console.log("Build error", err);
+			})
+			.finally(() => (building = false));
+	};
+
+	const pollForDeploymentStateChange = (
+		steps = ["ready", "building", "ready"],
+		currStep = 0,
+		count = 1,
+		max = 24
+	) => {
+		let retry = true;
+		getDeploymentState()
+			.then(({ data: { state } }) => {
+				deploymentState = state;
+				if (state.toLowerCase() === steps[currStep + 1].toLowerCase()) {
+					currStep += 1;
+				}
+				if (currStep >= steps.length - 1) {
+					retry = false;
+				}
+			})
+			.catch(() => {
+				deploymentState = "Failed to get state";
+			})
+			.finally(() => {
+				if (retry && count <= max) {
+					setTimeout(() => {
+						pollForDeploymentStateChange(steps, currStep, count++, max);
+					}, 10000);
+				}
+			});
 	};
 </script>
 
@@ -127,11 +167,18 @@
 	<button on:click={handlePublishPage}>
 		{$store.published ? 'Unpublish Page' : 'Publish Page'}
 	</button>
-	<button
-		disabled={building}
-		on:click={handleCommit}>{'Commit Changes'}</button>
-	<button on:click={handleBuild}>Build Site</button>
-	<div>Build Status: {buildMessage}</div>
+	<Button
+		on:click={handleCommit}
+		text="Commit Changes"
+		loading={committing}
+		loadingText="Commiting..." />
+	<Button
+		on:click={handleBuild}
+		text="Build Site"
+		loadingText="Triggering build..."
+		loading={building}
+		disableDuringLoad />
+	<div>Build Status: {deploymentState}</div>
 	<slot />
 </div>
 <button
