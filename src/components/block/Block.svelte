@@ -150,10 +150,7 @@
 </style>
 
 {#if getLevelConfig(level).headDivider && !hideFirstDivider}
-  <!-- <Divider 
-    horizontal={true} 
-    createChild={() => createChild(0)} 
-  /> -->
+  <!-- <Divider horizontal={true} createChild={() => createChild(0)} /> -->
 {/if}
 <div
   class="container"
